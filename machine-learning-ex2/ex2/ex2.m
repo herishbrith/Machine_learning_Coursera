@@ -1,3 +1,5 @@
+setenv("GNUTERM","qt")
+
 %% Machine Learning Online Class - Exercise 2: Logistic Regression
 %
 %  Instructions

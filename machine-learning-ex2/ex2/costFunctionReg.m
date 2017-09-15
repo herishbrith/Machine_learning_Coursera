@@ -17,10 +17,11 @@ grad = zeros(size(theta));
 %               Compute the partial derivatives and set grad to the partial
 %               derivatives of the cost w.r.t. each parameter in theta
 
-
-
-
-
+[normal_cost, normal_grad] = costFunction(theta, X, y);
+J = normal_cost + (lambda / (2 * m)) * sum(theta(2:end) .^ 2);
+grad = normal_grad' + (theta .* (lambda / m));
+% grad = bsxfun(@plus, normal_grad', (theta .* (lambda / m))); % One way to add two mat element-wise
+grad(1) = normal_grad(1);
 
 % =============================================================
 

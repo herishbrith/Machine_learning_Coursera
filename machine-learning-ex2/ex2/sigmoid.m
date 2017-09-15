@@ -9,10 +9,13 @@ g = zeros(size(z));
 % Instructions: Compute the sigmoid of each value of z (z can be a matrix,
 %               vector or scalar).
 
-
-
+g = arrayfun(@findSigmoid, z);
 
 
 % =============================================================
 
+end
+
+function [out] = findSigmoid(num)
+	out = 1 / (1+exp(-num));
 end
