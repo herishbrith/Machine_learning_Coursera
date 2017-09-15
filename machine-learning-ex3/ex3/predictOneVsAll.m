@@ -30,13 +30,12 @@ X = [ones(m, 1) X];
 %       for each row.
 %       
 
-
-
-
-
-
+for row = 1:m
+	prediction_vector = sigmoid(sum(bsxfun(@times, all_theta, X(row,:)), 2));
+	[max_value max_index] = max(prediction_vector);
+	p(row) = max_index;
+end
 
 % =========================================================================
-
 
 end

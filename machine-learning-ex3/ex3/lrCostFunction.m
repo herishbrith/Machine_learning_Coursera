@@ -36,17 +36,17 @@ grad = zeros(size(theta));
 %           grad = grad + YOUR_CODE_HERE (using the temp variable)
 %
 
-h_theta = sigmoid(sum(theta' .* X, 2));
-J = - (sum(y .* log(h_theta)) + sum((1-y) .* log(1 - h_theta))) / m;
-cost_regularization = (lambda / (2 * m)) * sum(theta(2:end) .^ 2);
+h_theta = sigmoid(sum(bsxfun(@times, theta', X), 2));
+J = - (sum(bsxfun(@times, y, log(h_theta))) + sum(bsxfun(@times, (1-y), log(1 - h_theta)))) / m;
+cost_regularization = (lambda / (2 * m)) * sum(bsxfun(@power, theta(2:end), 2));
 J = J + cost_regularization; % after implementing regularization
-normal_grad = sum((h_theta - y) .* X) / m;
+normal_grad = sum(bsxfun(@times, (h_theta - y), X)) / m;
 
 % T done in order to add with normal_grad
 % Also, we don't require first element for regularization
 % So we set the value of first element right away
 grad(1) = normal_grad(1);
-grad_regularization = (theta(2:end) .* (lambda / m))';
+grad_regularization = (bsxfun(@times, theta(2:end), (lambda / m)))';
 grad(2:end) = normal_grad(2:end) + grad_regularization;
 grad(1) = normal_grad(1); % Since there is no impact of regularization on g0
 
