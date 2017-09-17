@@ -62,21 +62,39 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
-h_theta = sigmoid(sum(bsxfun(@times, theta', X), 2));
-J = - (sum(bsxfun(@times, y, log(h_theta))) + sum(bsxfun(@times, (1-y), log(1 - h_theta)))) / m;
-cost_regularization = (lambda / (2 * m)) * sum(bsxfun(@power, theta(2:end), 2));
+X = [ones(m, 1) X];
+eyeMatrix = eye(num_labels);
+
+% Calculate input to hidden layer neurons, a_hidden
+for row = 1:m
+	x_row = X(row,:);
+	y_row = eyeMatrix(y(row),:);
+
+	% a_hidden is the hidden layer action vector
+	a_hidden = [1; sigmoid(sum(bsxfun(@times, Theta1, x_row), 2))];
+
+	% a_output is the k-dimensional vector that comes out of output layer
+	a_output = sigmoid(sum(bsxfun(@times, Theta2, a_hidden'), 2));
+
+	% Cost function without regularization
+	J = J - ((sum(bsxfun(@times, y_row', log(a_output))) ...
+	+ sum(bsxfun(@times, (1-y_row)', log(1 - a_output)))) / m);
+
+	% T done in order to add with normal_grad
+	% Also, we don't require first element for regularization
+	% Since there is no impact of regularization on g0
+	% So we set the value of first element right away
+	%normal_grad = sum(bsxfun(@times, (a_output - y_row), X)) / m;
+	%grad(1) = normal_grad(1);
+	%grad_regularization = (bsxfun(@times, theta(2:end), (lambda / m)))';
+	%grad(2:end) = normal_grad(2:end) + grad_regularization;
+end
+
+% Cost regularization function for J
+cost_regularization = (lambda / (2 * m)) * ...
+(sum(sum(bsxfun(@power, Theta1(:,2:end), 2), 2)) + ...
+sum(sum(bsxfun(@power, Theta2(:,2:end), 2), 2)));
 J = J + cost_regularization; % after implementing regularization
-
-% T done in order to add with normal_grad
-% Also, we don't require first element for regularization
-% Since there is no impact of regularization on g0
-% So we set the value of first element right away
-normal_grad = sum(bsxfun(@times, (h_theta - y), X)) / m;
-grad(1) = normal_grad(1);
-grad_regularization = (bsxfun(@times, theta(2:end), (lambda / m)))';
-grad(2:end) = normal_grad(2:end) + grad_regularization;
-
-
 
 
 
