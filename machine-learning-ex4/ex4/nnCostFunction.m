@@ -62,32 +62,40 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
-X = [ones(m, 1) X];
 eyeMatrix = eye(num_labels);
+Delta_2 = zeros(size(Theta2));
+Delta_1 = zeros(size(Theta1));
 
-% Calculate input to hidden layer neurons, a_hidden
+% Calculate Cost and grad
+% Steps mentioned for calculating grad
 for row = 1:m
-	x_row = X(row,:);
-	y_row = eyeMatrix(y(row),:);
+	% Step 1: Calculate a_1, z_2, a_2, z_3, a_output
+	a_1 = [1; X(row,:)'];
+	y_row = eyeMatrix(y(row),:)';
 
-	% a_hidden is the hidden layer action vector
-	a_hidden = [1; sigmoid(sum(bsxfun(@times, Theta1, x_row), 2))];
+	% z_2 is vector of all sums in layer 3
+	% a_2 is the hidden layer action vector
+	z_2 = sum(bsxfun(@times, Theta1, a_1'), 2);
+	a_2 = [1; sigmoid(z_2)];
 
+	% z_3 is vector of all sums in layer 3
 	% a_output is the k-dimensional vector that comes out of output layer
-	a_output = sigmoid(sum(bsxfun(@times, Theta2, a_hidden'), 2));
+	z_3 = sum(bsxfun(@times, Theta2, a_2'), 2);
+	a_output = sigmoid(z_3);
 
 	% Cost function without regularization
-	J = J - ((sum(bsxfun(@times, y_row', log(a_output))) ...
-	+ sum(bsxfun(@times, (1-y_row)', log(1 - a_output)))) / m);
+	J = J - ((sum(bsxfun(@times, y_row, log(a_output))) ...
+	+ sum(bsxfun(@times, (1-y_row), log(1 - a_output)))) / m);
 
-	% T done in order to add with normal_grad
-	% Also, we don't require first element for regularization
-	% Since there is no impact of regularization on g0
-	% So we set the value of first element right away
-	%normal_grad = sum(bsxfun(@times, (a_output - y_row), X)) / m;
-	%grad(1) = normal_grad(1);
-	%grad_regularization = (bsxfun(@times, theta(2:end), (lambda / m)))';
-	%grad(2:end) = normal_grad(2:end) + grad_regularization;
+	% Step 2: Calculate delta_3
+	delta_3 = a_output - y_row;
+
+	% Step 3: For hidden layer, calculate delta_2
+	delta_2 = bsxfun(@times, (Theta2' * delta_3), sigmoidGradient([1; z_2]));
+
+	% Step 4: Gather Delta_2 and Delta_1
+	Delta_2 = Delta_2 + (delta_3 * a_2');
+	Delta_1 = Delta_1 + (delta_2(2:end) * a_1');
 end
 
 % Cost regularization function for J
@@ -96,19 +104,12 @@ cost_regularization = (lambda / (2 * m)) * ...
 sum(sum(bsxfun(@power, Theta2(:,2:end), 2), 2)));
 J = J + cost_regularization; % after implementing regularization
 
+Theta1_grad = Delta_1 / m;
+Theta2_grad = Delta_2 / m;
 
-
-
-
-
-
-
-
-
-
-
-
-
+% Add regularization to grad
+Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + (lambda / m) * Theta1(:,2:end);
+Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + (lambda / m) * Theta2(:,2:end);
 
 % -------------------------------------------------------------
 
@@ -116,6 +117,5 @@ J = J + cost_regularization; % after implementing regularization
 
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
-
 
 end
