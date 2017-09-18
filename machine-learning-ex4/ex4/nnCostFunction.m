@@ -65,8 +65,6 @@ Theta2_grad = zeros(size(Theta2));
 % Basic for loop implementation to find Delta_1 & Delta_2
 %{
 eyeMatrix = eye(num_labels);
-Delta_2 = zeros(size(Theta2));
-Delta_1 = zeros(size(Theta1));
 
 % Calculate Cost and grad
 % Steps mentioned for calculating grad
@@ -96,16 +94,14 @@ for row = 1:m
 	delta_2 = bsxfun(@times, (Theta2' * delta_3), sigmoidGradient([1; z_2]));
 
 	% Step 4: Gather Delta_2 and Delta_1
-	Delta_2 = Delta_2 + (delta_3 * a_2');
-	Delta_1 = Delta_1 + (delta_2(2:end) * a_1');
+	Theta2_grad = Theta2_grad + ((delta_3 * a_2') / m);
+	Theta1_grad = Theta1_grad + ((delta_2(2:end) * a_1') / m);
 end
 %}
 
 % Matrix implementation to find Delta_1 & Delta_2
 eyeMatrix = eye(num_labels);
 y_binary = zeros(size(y, 1), num_labels);
-Delta_2 = zeros(size(Theta2));
-Delta_1 = zeros(size(Theta1));
 
 % Make a matrix to hold binary values of y
 for label = 1:num_labels
@@ -136,10 +132,10 @@ delta_2 = bsxfun(@times, (Theta2' * delta_3), sigmoidGradient([ones(1,m); z_2]))
 J = sum(-sum(bsxfun(@times, y_binary', log(a_output)) +
 bsxfun(@times, (1-y_binary)', log(1-a_output))), 2) / m;
 
+% Step 4: Gather Delta_2 and Delta_1 from all examples
 for n = 1:m
-	% Step 4: Gather Delta_2 and Delta_1
-	Delta_2 = Delta_2 + (delta_3(:,n) * a_2(:,n)');
-	Delta_1 = Delta_1 + (delta_2(2:end,n) * a_1(:,n)');
+	Theta2_grad = Theta2_grad + ((delta_3(:,n) * a_2(:,n)') / m);
+	Theta1_grad = Theta1_grad + ((delta_2(2:end,n) * a_1(:,n)') / m);
 end
 
 % Cost regularization remains same for both matrix implementation
@@ -149,9 +145,6 @@ cost_regularization = (lambda / (2 * m)) * ...
 (sum(sum(bsxfun(@power, Theta1(:,2:end), 2), 2)) + ...
 sum(sum(bsxfun(@power, Theta2(:,2:end), 2), 2)));
 J = J + cost_regularization; % after implementing regularization
-
-Theta1_grad = Delta_1 / m;
-Theta2_grad = Delta_2 / m;
 
 % Add regularization to grad
 Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + (lambda / m) * Theta1(:,2:end);
