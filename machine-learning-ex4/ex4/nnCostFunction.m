@@ -115,29 +115,28 @@ end
 % Determine a_output for all training examples
 % Below steps from 1 through 5 calculate theta grads
 % Step 1: Calculate a_1, z_2, a_2, z_3, a_output
-a_1 = [ones(m, 1), X]';
+a_1 = [ones(m, 1), X]'; % n + 1 x m
 
 % a_2 is the hidden layer action vector
-z_2 = Theta1 * a_1;
-a_2 = [ones(1,m); sigmoid(z_2)];
+z_2 = Theta1 * a_1; % hidden_layer_size x m
+a_2 = [ones(1,m); sigmoid(z_2)]; % hidden_layer_size + 1 x m
 
 % a_output is the k-dimensional vector that comes out of output layer
-z_3 = Theta2 * a_2;
-a_output = sigmoid(z_3);
+z_3 = Theta2 * a_2; % num_labels x m
+a_output = sigmoid(z_3); % num_labels x m
 
 % Step 2: Calculate delta_3
-delta_3 = a_output - y_binary';
+delta_3 = a_output - y_binary'; % num_labels x m
 
 % Step 3: For hidden layer, calculate delta_2
+% size = hidden_layer_size + 1 x m
 delta_2 = bsxfun(@times, (Theta2' * delta_3), sigmoidGradient([ones(1,m); z_2]));
 
+% Cost function without regularization
+J = sum(-sum(bsxfun(@times, y_binary', log(a_output)) +
+bsxfun(@times, (1-y_binary)', log(1-a_output))), 2) / m;
+
 for n = 1:m
-	y_row = y_binary(n,:)';
-
-	% Cost function without regularization
-	J = J - ((sum(bsxfun(@times, y_row, log(a_output(:,n)))) ...
-	+ sum(bsxfun(@times, (1-y_row), log(1 - a_output(:,n))))) / m);	
-
 	% Step 4: Gather Delta_2 and Delta_1
 	Delta_2 = Delta_2 + (delta_3(:,n) * a_2(:,n)');
 	Delta_1 = Delta_1 + (delta_2(2:end,n) * a_1(:,n)');
