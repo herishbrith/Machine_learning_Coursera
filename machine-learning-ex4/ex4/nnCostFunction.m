@@ -62,6 +62,8 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+% Basic for loop implementation to find Delta_1 & Delta_2
+%{
 eyeMatrix = eye(num_labels);
 Delta_2 = zeros(size(Theta2));
 Delta_1 = zeros(size(Theta1));
@@ -97,7 +99,52 @@ for row = 1:m
 	Delta_2 = Delta_2 + (delta_3 * a_2');
 	Delta_1 = Delta_1 + (delta_2(2:end) * a_1');
 end
+%}
 
+% Matrix implementation to find Delta_1 & Delta_2
+eyeMatrix = eye(num_labels);
+y_binary = zeros(size(y, 1), num_labels);
+Delta_2 = zeros(size(Theta2));
+Delta_1 = zeros(size(Theta1));
+
+% Make a matrix to hold binary values of y
+for label = 1:num_labels
+	y_binary(y==label,:) = repmat(eyeMatrix(label,:), size(y_binary(y==label), 1), 1);
+end
+
+% Determine a_output for all training examples
+% Below steps from 1 through 5 calculate theta grads
+% Step 1: Calculate a_1, z_2, a_2, z_3, a_output
+a_1 = [ones(m, 1), X]';
+
+% a_2 is the hidden layer action vector
+z_2 = Theta1 * a_1;
+a_2 = [ones(1,m); sigmoid(z_2)];
+
+% a_output is the k-dimensional vector that comes out of output layer
+z_3 = Theta2 * a_2;
+a_output = sigmoid(z_3);
+
+% Step 2: Calculate delta_3
+delta_3 = a_output - y_binary';
+
+% Step 3: For hidden layer, calculate delta_2
+delta_2 = bsxfun(@times, (Theta2' * delta_3), sigmoidGradient([ones(1,m); z_2]));
+
+for n = 1:m
+	y_row = y_binary(n,:)';
+
+	% Cost function without regularization
+	J = J - ((sum(bsxfun(@times, y_row, log(a_output(:,n)))) ...
+	+ sum(bsxfun(@times, (1-y_row), log(1 - a_output(:,n))))) / m);	
+
+	% Step 4: Gather Delta_2 and Delta_1
+	Delta_2 = Delta_2 + (delta_3(:,n) * a_2(:,n)');
+	Delta_1 = Delta_1 + (delta_2(2:end,n) * a_1(:,n)');
+end
+
+% Cost regularization remains same for both matrix implementation
+% and basic implementation using for loop
 % Cost regularization function for J
 cost_regularization = (lambda / (2 * m)) * ...
 (sum(sum(bsxfun(@power, Theta1(:,2:end), 2), 2)) + ...
