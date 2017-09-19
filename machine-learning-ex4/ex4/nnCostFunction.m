@@ -132,21 +132,21 @@ delta_2 = bsxfun(@times, (Theta2' * delta_3), sigmoidGradient([ones(1,m); z_2]))
 J = sum(-sum(bsxfun(@times, y_binary', log(a_output)) +
 bsxfun(@times, (1-y_binary)', log(1-a_output))), 2) / m;
 
+% Cost regularization remains same for both matrix implementation
+% and basic implementation
+% Cost regularization function, J
+cost_regularization = (lambda / (2 * m)) * ...
+(sum(sum(bsxfun(@power, Theta1(:,2:end), 2), 2)) + ...
+sum(sum(bsxfun(@power, Theta2(:,2:end), 2), 2)));
+J = J + cost_regularization; % after implementing regularization
+
 % Step 4: Gather Delta_2 and Delta_1 from all examples
 for n = 1:m
 	Theta2_grad = Theta2_grad + ((delta_3(:,n) * a_2(:,n)') / m);
 	Theta1_grad = Theta1_grad + ((delta_2(2:end,n) * a_1(:,n)') / m);
 end
 
-% Cost regularization remains same for both matrix implementation
-% and basic implementation using for loop
-% Cost regularization function for J
-cost_regularization = (lambda / (2 * m)) * ...
-(sum(sum(bsxfun(@power, Theta1(:,2:end), 2), 2)) + ...
-sum(sum(bsxfun(@power, Theta2(:,2:end), 2), 2)));
-J = J + cost_regularization; % after implementing regularization
-
-% Add regularization to grad
+% Add regularization to all the terms other than first
 Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + (lambda / m) * Theta1(:,2:end);
 Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + (lambda / m) * Theta2(:,2:end);
 
