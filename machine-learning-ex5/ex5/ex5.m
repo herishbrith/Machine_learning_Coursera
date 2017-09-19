@@ -220,3 +220,19 @@ end
 
 fprintf('Program paused. Press enter to continue.\n');
 pause;
+
+%% =========== Part 9: Verifying test error =============
+% This section verifies if the test error for chosen lambda is minimum
+
+lambda = 3;
+
+% Train the model
+[theta] = trainLinearReg([ones(m, 1) X], y, lambda);
+
+% Find train error
+[test_error grad] = ...
+linearRegCostFunction([ones(size(Xtest, 1), 1) Xtest], ytest, theta, lambda);
+fprintf("Test set error comes out to be: %f\n\n", test_error);
+
+fprintf('Program paused. Press enter to continue.\n');
+pause;
