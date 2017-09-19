@@ -39,14 +39,19 @@ error_val = zeros(length(lambda_vec), 1);
 %
 %
 
+for i = 1:length(lambda_vec)
+	% Determine lambda to be used from lambda_vec
+	lambda = lambda_vec(i);
 
+	% Train the model
+	[theta] = trainLinearReg(X, y, lambda);
 
+	% Find train error
+	[error_train(i), grad] = linearRegCostFunction(X, y, theta, 0);
 
-
-
-
-
-
+	% Find cv error
+	[error_val(i), grad] = linearRegCostFunction(Xval, yval, theta, 0);
+end
 
 % =========================================================================
 

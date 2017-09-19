@@ -55,7 +55,7 @@ error_val   = zeros(m, 1);
 
 for i = 1:m
 	% Train the model
-	[theta] = trainLinearReg(X(1:i,:), y(1:i), 100);
+	[theta] = trainLinearReg(X(1:i,:), y(1:i), 1);
 
 	% Find train error
 	[error_train(i), grad] = linearRegCostFunction(X(1:i,:), y(1:i), theta, 0);
@@ -63,11 +63,6 @@ for i = 1:m
 	% Find cv error
 	[error_val(i), grad] = linearRegCostFunction(Xval, yval, theta, 0);
 end
-
-
-
-
-
 
 % -------------------------------------------------------------
 
