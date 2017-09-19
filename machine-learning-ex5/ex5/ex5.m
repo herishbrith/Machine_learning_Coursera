@@ -227,11 +227,11 @@ pause;
 lambda = 3;
 
 % Train the model
-[theta] = trainLinearReg([ones(m, 1) X], y, lambda);
+[theta] = trainLinearReg([ones(m, 1) X_poly], y, lambda);
 
 % Find train error
 [test_error grad] = ...
-linearRegCostFunction([ones(size(Xtest, 1), 1) Xtest], ytest, theta, lambda);
+linearRegCostFunction([ones(size(Xtest, 1), 1) X_poly_test], ytest, theta, 0);
 fprintf("Test set error comes out to be: %f\n\n", test_error);
 
 fprintf('Program paused. Press enter to continue.\n');
