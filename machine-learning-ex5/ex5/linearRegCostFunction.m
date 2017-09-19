@@ -17,18 +17,15 @@ grad = zeros(size(theta));
 %               regression for a particular choice of theta.
 %
 %               You should set J to the cost and grad to the gradient.
-%
 
+error_term = (theta' * X')' - y;
+J = sum(bsxfun(@power, error_term, 2)) / (2 * m);
+J_reg = sum(bsxfun(@power, theta(2:end), 2)) * lambda / (2 * m);
+J = J + J_reg;
 
-
-
-
-
-
-
-
-
-
+grad = (error_term' * X)' / m;
+grad_reg = theta(2:end) * lambda / m;
+grad(2:end) = grad(2:end) + grad_reg;
 
 % =========================================================================
 

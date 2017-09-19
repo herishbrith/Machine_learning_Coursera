@@ -41,14 +41,13 @@ J = - (sum(bsxfun(@times, y, log(h_out))) + sum(bsxfun(@times, (1-y), log(1 - h_
 cost_regularization = (lambda / (2 * m)) * sum(bsxfun(@power, theta(2:end), 2));
 J = J + cost_regularization; % after implementing regularization
 
-% T done in order to add with normal_grad
+% T done in order to add with grad
 % Also, we don't require first element for regularization
 % Since there is no impact of regularization on g0
 % So we set the value of first element right away
-normal_grad = sum(bsxfun(@times, (h_out - y), X)) / m;
-grad(1) = normal_grad(1);
+grad = sum(bsxfun(@times, (h_out - y), X)) / m;
 grad_regularization = (bsxfun(@times, theta(2:end), (lambda / m)))';
-grad(2:end) = normal_grad(2:end) + grad_regularization;
+grad(2:end) = grad(2:end) + grad_regularization;
 
 % =============================================================
 
