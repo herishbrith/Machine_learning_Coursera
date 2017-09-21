@@ -23,11 +23,21 @@ sigma = 0.3;
 %        mean(double(predictions ~= yval))
 %
 
+cChoices = [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30];
+sigmaChoices = [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30];
+errorArray = zeros(size(cChoices, 2), size(sigmaChoices, 2));
 
-
-
-
-
+for i = 1:length(cChoices)
+	for j = 1:length(sigmaChoices)
+		i, j
+		[model] = svmTrain(X, y, cChoices(i), @(x1, x2) gaussianKernel(x1, x2, sigmaChoices(j)));
+		pred = svmPredict(model, Xval);
+		errorArray(i, j) = mean(double(pred ~= yval));
+	end
+end
+[cChoice sigmaChoice] = find(errorArray==min(min(errorArray)))
+C = cChoices(cChoice);
+sigma = sigmaChoices(sigmaChoice);
 
 % =========================================================================
 
