@@ -1,3 +1,5 @@
+setenv("GNUTERM","qt")
+
 %% Machine Learning Online Class
 %  Exercise 6 | Support Vector Machines
 %
@@ -32,7 +34,7 @@ fprintf('Loading and Visualizing Data ...\n')
 load('ex6data1.mat');
 
 % Plot training data
-plotData(X, y);
+%plotData(X, y);
 
 fprintf('Program paused. Press enter to continue.\n');
 pause;
