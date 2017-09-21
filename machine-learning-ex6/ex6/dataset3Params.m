@@ -35,7 +35,7 @@ for i = 1:length(cChoices)
 		errorArray(i, j) = mean(double(pred ~= yval));
 	end
 end
-[cChoice sigmaChoice] = find(errorArray==min(min(errorArray)))
+[cChoice sigmaChoice] = find(errorArray==min(min(errorArray)));
 C = cChoices(cChoice);
 sigma = sigmaChoices(sigmaChoice);
 
