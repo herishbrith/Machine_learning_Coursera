@@ -41,9 +41,9 @@ Theta_grad = zeros(size(Theta));
 %
 
 J = sum(sum(bsxfun(@power, ...
-	bsxfun(@minus, ((Theta * X')' .* R), Y), 2))) / 2;
-X_grad = bsxfun(@minus, ((X * Theta') .* R), Y) * Theta;
-Theta_grad = bsxfun(@minus, ((X * Theta') .* R), Y)' * X;
+	bsxfun(@minus, (bsxfun(@times, (Theta * X')', R)), Y), 2))) / 2;
+X_grad = bsxfun(@minus, bsxfun(@times, (X * Theta'), R), Y) * Theta;
+Theta_grad = bsxfun(@minus, bsxfun(@times, (X * Theta'), R), Y)' * X;
 
 % =============================================================
 
