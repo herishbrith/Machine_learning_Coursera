@@ -45,6 +45,15 @@ J = sum(sum(bsxfun(@power, ...
 X_grad = bsxfun(@minus, bsxfun(@times, (X * Theta'), R), Y) * Theta;
 Theta_grad = bsxfun(@minus, bsxfun(@times, (X * Theta'), R), Y)' * X;
 
+cost_regularization = (sum(sum(bsxfun(@power, Theta, 2))) + ...
+	sum(sum(bsxfun(@power, X, 2)))) * lambda / 2;
+J = J + cost_regularization;
+
+X_regularization = lambda * X;
+Theta_regularization = lambda * Theta;
+X_grad = X_grad + X_regularization;
+Theta_grad = Theta_grad + Theta_regularization;
+
 % =============================================================
 
 grad = [X_grad(:); Theta_grad(:)];
