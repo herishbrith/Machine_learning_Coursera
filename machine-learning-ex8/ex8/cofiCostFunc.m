@@ -40,6 +40,8 @@ Theta_grad = zeros(size(Theta));
 %                     partial derivatives w.r.t. to each element of Theta
 %
 
+J = sum(sum(bsxfun(@power, ...
+	bsxfun(@minus, ((Theta * X')' .* R), Y), 2))) / 2;
 
 
 

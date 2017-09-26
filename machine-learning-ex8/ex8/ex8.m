@@ -36,7 +36,7 @@ fprintf('Visualizing example dataset for outlier detection.\n\n');
 load('ex8data1.mat');
 
 %  Visualize the example dataset
-plot(X(:, 1), X(:, 2), 'bx');
+%plot(X(:, 1), X(:, 2), 'bx');
 axis([0 30 0 30]);
 xlabel('Latency (ms)');
 ylabel('Throughput (mb/s)');
@@ -88,7 +88,7 @@ outliers = find(p < epsilon);
 
 %  Draw a red circle around those outliers
 hold on
-plot(X(outliers, 1), X(outliers, 2), 'ro', 'LineWidth', 2, 'MarkerSize', 10);
+%plot(X(outliers, 1), X(outliers, 2), 'ro', 'LineWidth', 2, 'MarkerSize', 10);
 hold off
 
 fprintf('Program paused. Press enter to continue.\n');
